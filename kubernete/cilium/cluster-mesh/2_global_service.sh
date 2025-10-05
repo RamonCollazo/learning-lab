@@ -1,3 +1,4 @@
+#!/bin/bash
 # In all clusters
 kubectl annotate service servicename service.cilium.io/global="true"
 
