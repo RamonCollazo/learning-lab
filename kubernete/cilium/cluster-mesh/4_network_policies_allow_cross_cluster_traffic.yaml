@@ -1,0 +1,30 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "podname-to-servicename"
+spec:
+  description: "Allow podname in cluster1 to contact servicename"
+  endpointSelector:
+    matchLabels:
+      name: podname
+      io.cilium.k8s.policy.cluster: cluster1
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        name: servicename
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "servicename-from-podname"
+spec:
+  description: "Allow servicename to be contacted by cluster1's podname"
+  endpointSelector:
+    matchLabels:
+      name: servicename
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        name: podname
+        io.cilium.k8s.policy.cluster: cluster1
