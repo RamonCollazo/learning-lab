@@ -1,0 +1,31 @@
+# Will deny all traffic originating from outside the cluster
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "external-lockdown"
+spec:
+  description: "Block all the traffic originating from outside of the cluster"
+  endpointSelector: {}
+  ingress:
+    - fromEntities:
+        - cluster
+# Allow access to Hubble relay
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "hubble-world"
+  namespace: "kube-system"
+spec:
+  description: "Allow access to Hubble from outside"
+  endpointSelector:
+    matchLabels:
+      k8s-app: hubble-relay
+  ingress:
+    - fromEntities:
+        - world
+    - toPorts:
+        - ports:
+            - port: '4245'
+              protocol: TCP
