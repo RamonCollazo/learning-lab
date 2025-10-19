@@ -1,7 +1,7 @@
-resource "aws_eip" "devops-eip" {
+resource "aws_eip" "example-eip" {
   domain = "vpc"
   
   tags = {
-    Name = "devops-eip"
+    Name = "example-eip"
   }
 }
