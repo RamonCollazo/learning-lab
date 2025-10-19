@@ -7,3 +7,13 @@ resource "aws_ebs_volume" "example-volume" {
     Name = "example-volume"
   }
 }
+
+# Snapshot
+resource "aws_ebs_snapshot" "example-vol-ss" {
+  volume_id   = aws_ebs_volume.k8s_volume.id
+  description = "example Snapshot"
+
+  tags = {
+    Name = "example-vol-ss"
+  }
+}
