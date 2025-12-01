@@ -1,0 +1,19 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumBGPAdvertisement
+metadata:
+  name: services
+  labels:
+    advertise: generic
+spec:
+  advertisements:
+    # - advertisementType: "PodCIDR"
+    - advertisementType: "Service"
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector:
+        matchLabels:
+          color: yellow
+        matchExpressions:
+          - {key: io.kubernetes.service.namespace, operator: In, values: ["tenant-c"]}

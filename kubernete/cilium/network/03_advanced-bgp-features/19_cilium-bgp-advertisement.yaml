@@ -1,0 +1,14 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumBGPAdvertisement
+metadata:
+  name: pod-cidr
+  labels:
+    advertise: pod-cidr
+spec:
+  advertisements:
+    - advertisementType: "PodCIDR"
+      attributes:
+        communities:
+          standard:
+            - 65001:100

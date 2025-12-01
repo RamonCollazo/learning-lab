@@ -1,0 +1,11 @@
+# Namespace selector
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "pool-yellow"
+spec:
+  blocks:
+  - cidr: "10.0.50.0/24"
+  serviceSelector:
+    matchLabels:
+      "io.kubernetes.service.namespace": "tenant-c"

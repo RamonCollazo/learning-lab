@@ -1,0 +1,11 @@
+# # Second pool, label selector
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "pool-green"
+spec:
+  blocks:
+  - cidr: "10.0.40.0/24"
+  serviceSelector:
+    matchLabels:
+      color: green
