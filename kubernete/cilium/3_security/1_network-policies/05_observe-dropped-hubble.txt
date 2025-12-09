@@ -1,0 +1,11 @@
+## The Hubble UI
+
+Now head to the 🔗 🛰️ Hubble UI tab, click on Connections and select the tenant-a namespace.
+
+This will show you how Hubble UI simplifies the understanding of service connectivity, and shows what connectivity has failed because of drops due to a Network Policy.
+
+In the service map, the red lines at the end of the arrows indicate a dropped flow, while gray indicates a successful flow.
+
+The flows table at the bottom of the pane also shows a simplified view of the connectivity for this namespace, including when the flow was last seen.
+
+Have a look around, then head to the next challenge were we will use this interface to add the missing traffic policies!

@@ -1,0 +1,105 @@
+# Creating a policy in the Hubble UI
+
+## The Hubble Policy Visualizer
+
+At the Hubble UI (it might take a few seconds to load), click on the Policies menu entry on the left.
+
+On the left side of the menu there is now a drop-down menu to select a namespace.
+
+Pick the tenant-a namespace. Since there is no network policies in this namespace yet, the main pane is empty, and the policy editor has a note saying "No policy to show".
+
+In the lower right hand corner, you can see a list of flows, all marked forwarded, corresponding to the traffic Hubble knows about this namespace.
+
+## Create a network policy
+
+Click the "Create empty policy" button.
+
+You will see a new policy being displayed in the main pane, along with its YAML representation in the editor pane in the lower hand corner.
+
+The center box in the visualizer corresponds to the target pods for the policy. All arrows connected to this box are currently green, because the policy allows all traffic at the moment.
+
+Click the 📝 button in the upper right hand corner of the center box and specify the following values:
+
+    Policy name: default
+    Policy namespace: tenant-a
+    Endpoint selector: (leave empty - an empty pod selector matches all pods in the namespace)
+
+Click the green Save button underneath it.
+
+This updates the YAML document in the editor pane, which should now read:
+
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default
+  namespace: tenant-a
+spec:
+  endpointSelector: {}
+
+If it doesn't, make sure you have selected the ⬢ Cilium tab of the editor, not the ⎈ Kubernetes one.
+
+## Adding default deny rules
+
+In the center block, click on the 🔓 Ingress Default Allow and Egress Default Allow 🔓 buttons, respectively in the lower left and lower right hand corners. This will update the policy to have rules that will drop all inbound and outbound connectivity from any pod in the tenant-a namespace.
+
+All arrows in the visualizer have now turned red, and the YAML spec should now be:
+
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+
+You can see that adding empty rules will enforce a deny policy by default.
+
+## Allowing traffic
+
+Now that we have a default deny, we can start allowing specific traffic in the policy.
+
+We want to allow the following communication patterns:
+
+    Ingress from workloads in the same namespace.
+    Egress to workloads in the same namespace.
+    Egress from workloads in the namespace to KubeDNS/CoreDNS so pods in the namespace can perform DNS requests.
+
+To do that, on the left side (i.e. Ingress) of the visualizer, find the second box, titled {} In Namespace and click on the Any pod text. In the pop-up window, click Allow from any pod. This adds a green arrow from the {} In Namespace box to the center box, as well as a new Ingress rule to the YAML policy manifest:
+
+  ingress:
+    - fromEndpoints:
+        - {}
+
+Repeat this step on the right side for the Egress In Namespace box.
+
+Then on the right side (i.e. Egress), in the In Cluster box, click the Kubernetes DNS section, and in the pop-up window click the Allow rule button. Hover on the same Kubernetes DNS section again and toggle the DNS proxy option. This adds a whole block to the YAML manifest, which allows DNS (UDP/53) traffic to the kube-system/kube-dns pods.
+
+You should now have three green arrows in the visualizer, and the YAML manifest should look like this:
+
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default
+  namespace: tenant-a
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - {}
+  egress:
+    - toEndpoints:
+        - {}
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+
+## Save the Policy to file
+
+Now we want to save the policy to our cluster. In the editor pane, select all the YAML code and copy it, the save it (it's in file 03_tentant-a-default-policy.yaml)

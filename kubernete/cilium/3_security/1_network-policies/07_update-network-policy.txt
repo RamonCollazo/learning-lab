@@ -1,0 +1,37 @@
+## Visualize current policy
+
+In the Hubble UI, go to the Policies view and pick the tenant-a namespace.
+
+In the lower right-hand corner we see that Hubble has identified the set of flows observed in the tenant-a namespace that are not allowed by the current policy, and marked them as dropped.
+
+
+## Create a new policy
+
+In order to allow additional traffic, we could add rules to the existing Network Policy.
+
+Instead, let's create a new one so the scopes can be clearly separated.
+
+Click the + New button in the top left hand corner of the editor pane.
+
+Then click the 📝 icon in the center box and rename the policy to extra.
+
+Look at the flows table in the bottom right hand pane. Two of them have a dropped verdict, the requests to backend-service in tenant-b and to api.twitter.com.
+
+Click on the line corresponding to the backend-service in tenant-b and select Add rule to policy. The YAML manifest is now updated to accept this traffic!
+
+Repeat the operation to allow traffic to api.twitter.com.
+
+This results in a fine-grained network policy that allows the required connectivity, while retaining the default deny aspects of a zero-trust network policy.
+
+The changes are also reflected in the policy visualization. For example check the lower box on the right side called In Cluster where now underneath the DNS rule another rule appeared.
+
+
+## View all policies
+
+Since we are working on a new Network Policy, the main pane only shows the rules for this specific policy.
+
+At the bottom of the left column, you can see a list of the policies for this namespace, with extra selected in a bold font, allowing you to switch between policies.
+
+Toggle the Visualize all button immediately on top of the list. The main pane now displays the result of all policies applied simultaneously.
+
+In the policy code overview, click on ⬢ Cilium and copy the entire code, save it (already in 08_tentant-a-extra-policy.yaml).
