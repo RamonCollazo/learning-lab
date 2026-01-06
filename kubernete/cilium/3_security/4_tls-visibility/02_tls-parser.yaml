@@ -1,0 +1,15 @@
+---
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: tls-visibility-policy
+spec:
+  parser:
+    tls:
+      enable: true
+      mode: socket
+      selectors:
+        - matchPorts:
+            - 443
+    tcp:
+      enable: true
