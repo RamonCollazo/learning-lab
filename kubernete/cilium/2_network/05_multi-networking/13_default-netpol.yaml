@@ -1,0 +1,18 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: server-default-policy
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      app: server-default
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: client
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP

@@ -1,0 +1,15 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: server-jupiter-policy
+  namespace: default
+spec:
+  endpointSelector:
+    matchLabels:
+      cni:com.isovalent.v1alpha1.network.attachment: jupiter
+  egress:
+    - icmps:
+        - fields:
+            - type: 8
+              family: IPv4

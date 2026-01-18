@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ip-masq-agent
+  namespace: kube-system
+data:
+  config: |
+    nonMasqueradeCIDRs:
+    - 192.168.0.0/16

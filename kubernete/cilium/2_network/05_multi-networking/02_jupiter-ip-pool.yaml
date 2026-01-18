@@ -1,0 +1,9 @@
+apiVersion: cilium.io/v2alpha1
+kind: CiliumPodIPPool
+metadata:
+  name: jupiter-ip-pool
+spec:
+  ipv4:
+    cidrs:
+      - 192.168.16.0/20
+    maskSize: 27

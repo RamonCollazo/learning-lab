@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: server-jupiter
+  labels:
+    app: server-jupiter
+  annotations:
+    network.v1alpha1.isovalent.com/pod-networks: jupiter
+spec:
+  containers:
+    - name: server-jupiter-container
+      image: quay.io/cilium/json-mock:v1.3.5
