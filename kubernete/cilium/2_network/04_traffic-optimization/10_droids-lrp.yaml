@@ -1,0 +1,18 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumLocalRedirectPolicy
+metadata:
+  name: droids
+  namespace: landspeeder
+spec:
+  redirectFrontend:
+    serviceMatcher:
+      serviceName: droids
+      namespace: landspeeder
+  redirectBackend:
+    localEndpointSelector:
+      matchLabels:
+        role: droid
+    toPorts:
+      - port: "80"
+        protocol: TCP
