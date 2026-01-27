@@ -1,0 +1,50 @@
+networkPolicy:
+  enabled: false
+recruiter:
+  replicas: 1
+jobposting:
+  replicas: 1
+coreapi:
+  replicas: 1
+  # how often the API should return errors
+  errorRate: 0.01
+  # how often the API should delay requests
+  sleepRate: 0.1
+  sleepLowerBound: 0.1
+  sleepUpperBound: 0.2
+crawler:
+  replicas: 1
+  crawlFrequencyLowerBound: 0.500
+  crawlFrequencyUpperBound: 5
+  revshell:
+    # enable a simulation of application compromise. When enabled, the crawler
+    # will spawn a netcat command to the revshell.uri after revshell.delay to
+    # generate suspicious activity.
+    enabled: false
+    # target hostname queried by netcat
+    host: "29ed272d6f0b5f81617b506732b403fe.not-reverse-shell.com"
+    # target port queried by netcat
+    port: 443
+    # count of seconds after which the reverse shell is spawned, default to 5
+    # minutes.
+    delay: 60
+    http:
+    # enable http queries to a given url every crawl tick.
+    enabled: true
+    # url must be defined when http is enabled, and start with either http://
+    # or https://.
+    url: 'http://api.github.com'
+resumes:
+  replicas: 1
+loader:
+  replicas: 1
+kafka:
+  replicas: 1
+kafkaTopic:
+  partitions: 2
+elasticsearch:
+  imageTag: 7.17.26
+strimzi-kafka-operator:
+  extraEnvs:
+    - name: STRIMZI_KUBERNETES_VERSION
+      value: "major=1,minor=33"
