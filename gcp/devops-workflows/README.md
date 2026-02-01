@@ -2,7 +2,7 @@
 
 This is my step by step on the lab [Implement DevOps Workflows in Google Cloud: Challenge Lab](https://partner.skills.google/paths/83/course_templates/716/labs/598755)
 
-This lab is a challenge lab, meaning that instead of following a step-by-step instruction, it must be figured out with the skills learned on how to complete the tasks.
+This lab is a challenge lab, meaning that instead of following a step-by-step instruction, it must be figured out with the skills learned to be able to complete the tasks.
 
 Tasks include the following:
 
