@@ -193,7 +193,8 @@ git commit -m "sample-app v1.0"
 git push -u origin dev
 ```
 
-Wait for trigger to be completed
+> [NOTE]
+> Wait for trigger to be completed
 
 4. Expose development-deployment
 
@@ -225,7 +226,8 @@ git commit -m "sample-app v1.0"
 git push -u origin master
 ```
 
-Wait for trigger to be completed
+> [NOTE]
+> Wait for trigger to be completed
 
 4. Expose development-deployment
 
@@ -282,7 +284,8 @@ git commit -m "sample-app v2.0"
 git push -u origin dev
 ```
 
-Wait for trigger to be completed
+> [NOTE]
+> Wait for trigger to be completed
 
 ### Build the second production deployment
 
@@ -332,7 +335,8 @@ git commit -m "sample-app v2.0"
 git push -u origin master
 ```
 
-Wait for trigger to be completed
+> [NOTE]
+> Wait for trigger to be completed
 
 ## Task 6. Roll back the production deployment
 
