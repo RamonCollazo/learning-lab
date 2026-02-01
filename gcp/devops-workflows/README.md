@@ -34,7 +34,6 @@ export PROJECT_ID=$(gcloud config get-value project)
 ```bash
 gcloud services enable container.googleapis.com \
     cloudbuild.googleapis.com
-    sourcerepo.googleapis.com
 ```
 
 2. Add the Kubernetes Developer role for the Cloud Build service account:
