@@ -1,3 +1,9 @@
+# Implement DevOps Workflows in Google Cloud: Challenge Lab | GSP330
+
+This is my step by step on the lab [Implement DevOps Workflows in Google Cloud: Challenge Lab](https://partner.skills.google/paths/83/course_templates/716/labs/598755)
+
+This lab is a challenge lab, meaning that instead of following a step-by-step instruction, it must be figured out with the skills learned on how to complete the tasks.
+
 Tasks include the following:
 
 - Creating a GKE cluster based on a set of configurations provided.
@@ -6,7 +12,9 @@ Tasks include the following:
 - Pushing updates to the app and creating new builds.
 - Rolling back the production application to a previous version.
 
-Overall, you are creating a simple CI/CD pipeline using GitHub Repositories, Artifact Registry, and Cloud Build.
+Overall, create a simple CI/CD pipeline using GitHub Repositories, Artifact Registry, and Cloud Build.
+
+## Setup and requirements
 
 ```bash
 export CLUSTER_NAME=hello-cluster
@@ -329,7 +337,7 @@ Wait for trigger to be completed
 
 ## Task 6. Roll back the production deployment
 
-1. Roll back the production-deployment to version v1.0
+1. Roll back the production-deployment to version `v1.0`
 
 ```bash
 kubectl -n prod rollout undo deployment/production-deployment
