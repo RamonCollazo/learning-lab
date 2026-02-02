@@ -133,7 +133,7 @@ git commit -m "first commit"
 git push -u origin master
 ```
 
-5. Create a **dev** branch and make a commit:
+6. Create a **dev** branch and make a commit:
 
 ```bash
 git add .
