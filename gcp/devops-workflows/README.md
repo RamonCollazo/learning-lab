@@ -34,6 +34,8 @@ export PROJECT_ID=$(gcloud config get-value project)
 ```bash
 gcloud services enable container.googleapis.com \
     cloudbuild.googleapis.com
+    sourcerepo.googleapis.com
+
 ```
 
 2. Add the Kubernetes Developer role for the Cloud Build service account:
@@ -128,7 +130,7 @@ cd ~/sample-app/
 git checkout -b master
 git add .
 git commit -m "first commit"
-git push origin master
+git push -u origin master
 ```
 
 5. Create a **dev** branch and make a commit:
@@ -172,22 +174,32 @@ Use cloud console on **Cloud Build / Triggers**
 
 ### Build the first development deployment
 
-1. Replace `<version>` with `v1.0` on file `cloudbuild-dev.yaml`
-
-```bash
-sed -i 's/<version>/v1.0/g' ~/sample-app/cloudbuild-dev.yaml
-```
-
-2. Replace `<todo>` with the correct container image name on `dev/deployment.yaml`
-
-```bash
-sed -i "s/<todo>/$REGION-docker.pkg.dev\/$PROJECT_ID\/my-repository\/hello-cloudbuild-dev:v1.0/g" ~/sample-app/dev/deployment.yaml
-```
-
-3. Make commit and push to **dev** branch
+1. Build and push Docker image
 
 ```bash
 cd ~/sample-app
+COMMIT_ID="$(git rev-parse --short=7 HEAD)"
+gcloud builds submit --tag="${REGION}-docker.pkg.dev/${PROJECT_ID}/$REPO/hello-cloudbuild:${COMMIT_ID}" .
+EXPORTED_IMAGE="$(gcloud builds submit --tag="${REGION}-docker.pkg.dev/${PROJECT_ID}/$REPO/hello-cloudbuild:${COMMIT_ID}" . | grep IMAGES | awk '{print $2}')"
+```
+
+2. Replace `<version>` with `v1.0` on file `cloudbuild-dev.yaml`
+
+```bash
+git checkout dev
+sed -i "9c\    args: ['build', '-t', '$REGION-docker.pkg.dev/$PROJECT_ID/my-repository/hello-cloudbuild-dev:v1.0', '.']" cloudbuild-dev.yaml
+sed -i "13c\    args: ['push', '$REGION-docker.pkg.dev/$PROJECT_ID/my-repository/hello-cloudbuild-dev:v1.0']" cloudbuild-dev.yaml
+```
+
+3. Replace `<todo>` with the correct container image name on `dev/deployment.yaml`
+
+```bash
+sed -i "17s|        image: <todo>|        image: $REGION-docker.pkg.dev/$PROJECT_ID/my-repository/hello-cloudbuild-dev:v1.0|" dev/deployment.yaml
+```
+
+4. Make commit and push to **dev** branch
+
+```bash
 git add .
 git commit -m "sample-app v1.0"
 git push -u origin dev
@@ -196,7 +208,7 @@ git push -u origin dev
 > [!NOTE]
 > Wait for trigger to be completed
 
-4. Expose development-deployment
+5. Expose development-deployment
 
 ```bash
 kubectl -n dev expose deployment development-deployment --name dev-deployment-service --type LoadBalancer --port 8080 --target-port 8080
@@ -207,20 +219,20 @@ kubectl -n dev expose deployment development-deployment --name dev-deployment-se
 1. Replace `<version>` with `v1.0` on file `cloudbuild.yaml`
 
 ```bash
-git switch master
-sed -i 's/<version>/v1.0/g' ~/sample-app/cloudbuild.yaml
+git checkout master
+sed -i "11c\    args: ['build', '-t', '$REGION-docker.pkg.dev/\$PROJECT_ID/my-repository/hello-cloudbuild:v1.0', '.']" cloudbuild.yaml
+sed -i "16c\    args: ['push', '$REGION-docker.pkg.dev/\$PROJECT_ID/my-repository/hello-cloudbuild:v1.0']" cloudbuild.yaml
 ```
 
 2. Replace `<todo>` with the correct container image name on `prod/deployment.yaml`
 
 ```bash
-sed -i "s/<todo>/$REGION-docker.pkg.dev\/$PROJECT_ID\/my-repository\/hello-cloudbuild-dev:v1.0/g" ~/sample-app/prod/deployment.yaml
+sed -i "17c\        image:  $REGION-docker.pkg.dev/$PROJECT_ID/my-repository/hello-cloudbuild:v1.0" prod/deployment.yaml
 ```
 
 3. Make commit and push to **master** branch
 
 ```bash
-cd ~/sample-app
 git add .
 git commit -m "sample-app v1.0"
 git push -u origin master
@@ -242,7 +254,7 @@ kubectl -n prod expose deployment production-deployment --name prod-deployment-s
 1. Switch back to the dev branch.
 
 ```bash
-git switch dev
+git checkout dev
 ```
 
 2. In the `main.go` file, update the `main()`
@@ -266,19 +278,19 @@ func redHandler(w http.ResponseWriter, r *http.Request) { \
 4. Update docker version to `v2.0` in `cloudbuild-dev.yaml`
 
 ```bash
-sed -i 's/v1.0/v2.0/g' ~/sample-app/cloudbuild-dev.yaml
+sed -i "9c\    args: ['build', '-t', '$REGION-docker.pkg.dev/\$PROJECT_ID/my-repository/hello-cloudbuild-dev:v2.0', '.']" cloudbuild-dev.yaml
+sed -i "13c\    args: ['push', '$REGION-docker.pkg.dev/\$PROJECT_ID/my-repository/hello-cloudbuild-dev:v2.0']" cloudbuild-dev.yaml
 ```
 
 5. On `dev/deployment.yaml`, update the image version
 
 ```bash
-sed -i 's/v1.0/v2.0/g' ~/sample-app/dev/deployment.yaml
+sed -i "17c\        image: $REGION-docker.pkg.dev/$PROJECT_ID/my-repository/hello-cloudbuild:v2.0" dev/deployment.yaml
 ```
 
 6. Make commit and push to **dev** branch
 
 ```bash
-cd ~/sample-app
 git add .
 git commit -m "sample-app v2.0"
 git push -u origin dev
@@ -293,7 +305,7 @@ git push -u origin dev
 
 
 ```bash
-git switch master
+git checkout master
 ```
 
 2. In the `main.go` file, update the `main()`
@@ -317,19 +329,19 @@ func redHandler(w http.ResponseWriter, r *http.Request) { \
 4. Update docker version to `v2.0` in `cloudbuild.yaml`
 
 ```bash
-sed -i 's/v1.0/v2.0/g' ~/sample-app/cloudbuild.yaml
+sed -i "11c\    args: ['build', '-t', '$REGION-docker.pkg.dev/\$PROJECT_ID/my-repository/hello-cloudbuild:v2.0', '.']" cloudbuild.yaml
+sed -i "16c\    args: ['push', '$REGION-docker.pkg.dev/\$PROJECT_ID/my-repository/hello-cloudbuild:v2.0']" cloudbuild.yaml
 ```
 
 5. On `prod/deployment.yaml`, update the image version
 
 ```bash
-sed -i 's/v1.0/v2.0/g' ~/sample-app/prod/deployment.yaml
+sed -i "17c\        image: $REGION-docker.pkg.dev/$PROJECT_ID/my-repository/hello-cloudbuild:v2.0" prod/deployment.yaml
 ```
 
 6. Make commit and push to **master** branch
 
 ```bash
-cd ~/sample-app
 git add .
 git commit -m "sample-app v2.0"
 git push -u origin master
